@@ -1,0 +1,32 @@
+
+Regressao Logistica
+              precision    recall  f1-score   support
+
+           0       0.98      0.95      0.97       241
+           1       0.54      0.76      0.63        17
+
+    accuracy                           0.94       258
+   macro avg       0.76      0.86      0.80       258
+weighted avg       0.95      0.94      0.95       258
+
+
+Random Forest
+              precision    recall  f1-score   support
+
+           0       0.95      0.99      0.97       241
+           1       0.62      0.29      0.40        17
+
+    accuracy                           0.94       258
+   macro avg       0.79      0.64      0.68       258
+weighted avg       0.93      0.94      0.93       258
+
+
+Gradient Boosting
+              precision    recall  f1-score   support
+
+           0       0.97      0.97      0.97       241
+           1       0.61      0.65      0.63        17
+
+    accuracy                           0.95       258
+   macro avg       0.79      0.81      0.80       258
+weighted avg       0.95      0.95      0.95       258
