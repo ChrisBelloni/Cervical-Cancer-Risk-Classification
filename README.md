@@ -34,9 +34,6 @@ Os resultados serão salvos na pasta `outputs/`.
 
 - Regressão Logística
 - Random Forest
-
-git config --global user.name "Christinne Belloni"
-git config --global user.email "seu_email@exemplo.com"
 - Gradient Boosting
 
 ## Métricas utilizadas
