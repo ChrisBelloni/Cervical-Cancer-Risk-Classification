@@ -33,7 +33,6 @@ Construir uma solução inicial de Machine Learning para apoiar a triagem de ris
 │   └── visualization.py
 ├── Dockerfile
 ├── README.md
-├── ROTEIRO_VIDEO_DEMONSTRACAO.md
 ├── Relatorio_Tecnico_Tech_Challenge_Final.pdf
 ├── main.py
 └── requirements.txt
