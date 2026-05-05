@@ -21,7 +21,7 @@ Construir uma solução inicial de Machine Learning para apoiar a triagem de ris
 ```text
 .
 ├── data/
-│   └── README_dataset.md
+│   └── kag_risk_factors_cervical_cancer.csv
 ├── notebooks/
 │   └── tech_challenge_final_colab.ipynb
 ├── outputs/
