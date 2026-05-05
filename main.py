@@ -1,82 +1,70 @@
-"""Execução principal do projeto Tech Challenge - Fase 1.
+"""Pipeline principal para classificacao de risco de cancer cervical.
 
-O script treina modelos de classificação para apoiar a triagem de risco de
-câncer do colo do útero usando a variável alvo `Biopsy`.
+Execute com:
+    python main.py
 """
 from __future__ import annotations
 
 from pathlib import Path
 
-import joblib
-import pandas as pd
-from sklearn.metrics import classification_report
+from src.evaluate import evaluate_and_save_results
+from src.preprocessing import (
+    load_data,
+    prepare_features,
+    split_data,
+    standardize_column_names,
+)
+from src.train import train_random_forest
+from src.utils import ensure_directory, log_message
 
-from src.data_processing import clean_data, load_data, prepare_features, split_train_validation_test
-from src.modeling import evaluate_model, train_and_select_model
-from src.visualization import save_confusion_matrix, save_feature_importance, save_roc_curve
 
-OUTPUT_DIR = Path("outputs")
-OUTPUT_DIR.mkdir(exist_ok=True)
+BASE_DIR = Path(__file__).resolve().parent
+DATA_PATH = BASE_DIR / "data" / "cervical_cancer.csv"
+FALLBACK_DATA_PATH = BASE_DIR / "data" / "kag_risk_factors_cervical_cancer.csv"
+OUTPUT_DIR = BASE_DIR / "outputs"
+TARGET_COLUMN = "Biopsy"
+RANDOM_STATE = 42
 
 
 def main() -> None:
-    """Executa o pipeline completo: carga, limpeza, treino, avaliação e outputs."""
-    df_raw = load_data()
-    df_clean = clean_data(df_raw)
-    X, y = prepare_features(df_clean)
+    """Executa carga, preprocessamento, treino, avaliacao e gravacao de outputs."""
+    ensure_directory(OUTPUT_DIR)
 
-    (
-        X_train,
-        X_val,
-        X_test,
-        y_train,
-        y_val,
-        y_test,
-        _X_trainval,
-        _y_trainval,
-    ) = split_train_validation_test(X, y)
+    data_path = DATA_PATH if DATA_PATH.exists() else FALLBACK_DATA_PATH
+    log_message(f"Carregando dataset: {data_path}")
+    df = load_data(data_path)
+    df = standardize_column_names(df)
 
-    best_name, best_model, validation_metrics, _fitted_models = train_and_select_model(
-        X_train, y_train, X_val, y_val
+    log_message("Separando variaveis preditoras e alvo.")
+    X, y = prepare_features(df, target_column=TARGET_COLUMN)
+
+    log_message("Dividindo dados em treino e teste.")
+    X_train, X_test, y_train, y_test = split_data(
+        X,
+        y,
+        test_size=0.2,
+        random_state=RANDOM_STATE,
+        scale_features=False,
     )
-    validation_metrics.to_csv(OUTPUT_DIR / "metrics_validation.csv", index=False)
 
-    y_test_pred = best_model.predict(X_test)
-    y_test_proba = best_model.predict_proba(X_test)[:, 1]
-    test_metrics = pd.DataFrame(
-        [{"modelo_escolhido": best_name, **evaluate_model(best_model, X_test, y_test)}]
+    log_message("Treinando RandomForestClassifier.")
+    model = train_random_forest(X_train, y_train, random_state=RANDOM_STATE)
+
+    log_message("Gerando previsoes e metricas.")
+    y_pred = model.predict(X_test)
+    y_proba = model.predict_proba(X_test)[:, 1] if hasattr(model, "predict_proba") else None
+
+    metrics = evaluate_and_save_results(
+        y_true=y_test,
+        y_pred=y_pred,
+        y_proba=y_proba,
+        output_dir=OUTPUT_DIR,
+        model_name="RandomForestClassifier",
     )
-    test_metrics.to_csv(OUTPUT_DIR / "metrics_test.csv", index=False)
 
-    with open(OUTPUT_DIR / "classification_report_test.txt", "w", encoding="utf-8") as file:
-        file.write(f"Modelo escolhido: {best_name}\n\n")
-        file.write(classification_report(y_test, y_test_pred, zero_division=0))
-
-    save_confusion_matrix(
-        y_test,
-        y_test_pred,
-        f"Matriz de Confusão - Teste ({best_name})",
-        OUTPUT_DIR / "confusion_matrix_test.png",
-    )
-    save_roc_curve(
-        y_test,
-        y_test_proba,
-        f"Curva ROC - Teste ({best_name})",
-        OUTPUT_DIR / "roc_curve_test.png",
-    )
-    importances = save_feature_importance(
-        best_model, X.columns, OUTPUT_DIR / "feature_importance.png"
-    )
-    importances.to_csv(OUTPUT_DIR / "feature_importance.csv", index=False)
-
-    joblib.dump(best_model, OUTPUT_DIR / "best_model.joblib")
-
-    print("Projeto executado com sucesso.")
-    print("Melhor modelo:", best_name)
-    print("Métricas de validação:")
-    print(validation_metrics)
-    print("Métricas de teste:")
-    print(test_metrics)
+    log_message("Execucao finalizada com sucesso.")
+    log_message(f"Metricas salvas em: {OUTPUT_DIR / 'metrics.json'}")
+    print(metrics)
 
 
 if __name__ == "__main__":
