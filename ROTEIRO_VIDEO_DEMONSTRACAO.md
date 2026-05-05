@@ -1,41 +1,30 @@
 # Roteiro do vídeo de demonstração - até 15 minutos
 
 ## 1. Abertura - 1 min
-Apresentar o projeto: sistema de apoio ao diagnóstico de câncer do colo do útero com Machine Learning, voltado à saúde da mulher.
 
-## 2. Problema e objetivo - 2 min
-Explicar que o objetivo é apoiar a triagem inicial de risco, prevendo a variável `Biopsy` a partir de dados clínicos e comportamentais. Reforçar que o modelo não substitui o médico.
+Apresentar o projeto: sistema de apoio à triagem de risco de câncer do colo do útero usando Machine Learning.
+Explicar que o foco é saúde da mulher e que o modelo não substitui diagnóstico médico.
 
-## 3. Dataset - 2 min
-Mostrar a origem pública do dataset, o arquivo CSV e a variável alvo. Explicar que valores `?` foram tratados como ausentes.
+## 2. Problema e dataset - 2 min
 
-## 4. Análise exploratória - 3 min
-Mostrar:
-- dimensões da base;
-- distribuição da variável alvo;
-- valores ausentes;
-- estatísticas descritivas;
-- correlação com `Biopsy`.
+Mostrar o dataset Cervical Cancer Risk Classification, a variável alvo `Biopsy` e o objetivo de classificar risco a partir de fatores clínicos e comportamentais.
 
-## 5. Pré-processamento - 2 min
-Explicar:
-- conversão para numérico;
-- imputação pela mediana;
-- padronização;
-- remoção de variáveis diagnósticas auxiliares para evitar vazamento;
-- separação treino, validação e teste.
+## 3. Estrutura do repositório - 2 min
 
-## 6. Modelagem - 2 min
-Mostrar os modelos:
-- Regressão Logística;
-- Árvore de Decisão;
-- Random Forest;
-- Gradient Boosting.
+Mostrar pastas `data`, `notebooks`, `src`, `outputs`, além de `main.py`, `README.md`, `requirements.txt` e `Dockerfile`.
 
-Explicar que o recall foi priorizado por causa do risco de falsos negativos em saúde.
+## 4. Notebook e análise exploratória - 3 min
 
-## 7. Resultados e interpretabilidade - 2 min
-Mostrar tabela de métricas, matriz de confusão, curva ROC, feature importance e/ou SHAP.
+Executar ou apresentar as células de carregamento, tratamento de valores ausentes, distribuição da variável alvo, estatísticas descritivas e correlação.
 
-## 8. Conclusão - 1 min
-Finalizar explicando que o sistema pode apoiar a triagem, mas precisa de validação clínica e decisão final médica.
+## 5. Modelagem - 3 min
+
+Explicar a divisão treino/validação/teste, o pipeline de imputação e padronização, e os modelos testados: Regressão Logística, Árvore de Decisão, Random Forest e Gradient Boosting.
+
+## 6. Métricas e escolha do modelo - 2 min
+
+Mostrar accuracy, precision, recall, F1-score, ROC-AUC, matriz de confusão e curva ROC. Explicar por que o recall é priorizado em saúde.
+
+## 7. Explicabilidade e conclusão - 2 min
+
+Mostrar feature importance ou SHAP. Encerrar destacando limitações, uso prático como apoio à triagem e decisão final do profissional de saúde.
